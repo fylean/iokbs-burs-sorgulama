@@ -1,0 +1,23 @@
+{
+  "name": "iokbs-burs-sorgulama",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/fylean/iokbs-burs-sorgulama#readme",
+  "bugs": {
+    "url": "https://github.com/fylean/iokbs-burs-sorgulama/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fylean/iokbs-burs-sorgulama.git"
+  },
+  "license": "AGPL-3.0-or-later",
+  "author": "fylean",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --env-file=.env index.js"
+  },
+  "dependencies": {
+    "puppeteer": "^24.6.1"
+  }
+}
