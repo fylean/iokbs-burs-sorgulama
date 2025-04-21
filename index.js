@@ -5,7 +5,7 @@ const pass = process.env.PASS;
 if (!tckn || !pass) return console.error("Lütfen .env dosyasına giriş bilgilerinizi girin.");
 
 (async () => {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch(process.env.DEBUG == "true" ? { headless: false, slowMo: 100 } : {});
     const page = await browser.newPage();
 
     await page.goto('https://giris.turkiye.gov.tr/Giris/gir', { waitUntil: 'networkidle2' });
@@ -44,13 +44,20 @@ if (!tckn || !pass) return console.error("Lütfen .env dosyasına giriş bilgile
     await page.goto('https://www.turkiye.gov.tr/ptt-ptt-uzerinden-yapilan-kurum-odemeleri-sorgulama', { waitUntil: 'networkidle2' });
     console.log("Burs kontrol ediliyor...");
 
-    await page.locator('#contentStart > div.tableWrapper').waitHandle();
-    const text = await page.$('text/numaralı sosyal kartınıza aktarılmıştır.') || await page.$('text/numaralısosyalkartınızaaktarılmıştır.') || false;
-
-    let status = "";
-    text ? status = await text?.evaluate(el => el.textContent) : status = "Bursunuz yatmamıştır.";
-
-    console.log(status);
-
+    const handle = await page.locator('#contentStart > div.tableWrapper').waitHandle();
+    const paymentsArray = await handle.evaluate(el => el.children[0].getElementsByTagName('tbody')[0].children[0].children);
+    for (let i = 0; i < paymentsArray.length; i++) {
+        const payment = paymentsArray[i];
+        const payer = payment.children[0].textContent.trim();
+        const paymentState = payment.children[6].textContent.trim();
+        if (payer.includes("BURS OD MERKEZ ÖDEME")) {
+            paymentState.includes("aktarılmıştır.")
+                ? console.log("Bursunuz yatmıştır.")
+                : console.log("Bursunuz işleme alınmış ancak hesabınıza yatırılmamıştır\nAçıklama: " + paymentState);
+            await browser.close();
+            return;
+        }
+    }
+    console.log("Bursunuz yatmamıştır.");
     await browser.close();
 })();
