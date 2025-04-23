@@ -25,6 +25,12 @@ Yazılımı çalıştırın:
 npm start
 ```
 
+## Hata Ayıklama
+
+`.env` dosyasına `DEBUG=true` ekleyin ve yazılımı çalıştırın.
+
+Açılan tarayıcı penceresinde yaşanan sorun veya hataları görebilirsiniz.
+
 ## Katkıda Bulunma
 
 Proje her türlü katkı ve yardıma açıktır.
