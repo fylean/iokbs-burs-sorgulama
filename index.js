@@ -44,20 +44,21 @@ if (!tckn || !pass) return console.error("Lütfen .env dosyasına giriş bilgile
     await page.goto('https://www.turkiye.gov.tr/ptt-ptt-uzerinden-yapilan-kurum-odemeleri-sorgulama', { waitUntil: 'networkidle2' });
     console.log("Burs kontrol ediliyor...");
 
-    const handle = await page.locator('#contentStart > div.tableWrapper').waitHandle();
-    const paymentsArray = await handle.evaluate(el => el.children[0].getElementsByTagName('tbody')[0].children[0].children);
+    await page.locator('#contentStart > div.tableWrapper').waitHandle();
+    const paymentsArray = await page.$$('#contentStart > .tableWrapper > table > tbody > *')
+    console.log(paymentsArray);
     for (let i = 0; i < paymentsArray.length; i++) {
         const payment = paymentsArray[i];
-        const payer = payment.children[0].textContent.trim();
-        const paymentState = payment.children[6].textContent.trim();
+        const payer = await payment.evaluate(el => el.children[0].textContent);
+        const paymentState = await payment.evaluate(el => el.children[6].textContent);
         if (payer.includes("BURS OD MERKEZ ÖDEME")) {
             paymentState.includes("aktarılmıştır.")
                 ? console.log("Bursunuz yatmıştır.")
                 : console.log("Bursunuz işleme alınmış ancak hesabınıza yatırılmamıştır\nAçıklama: " + paymentState);
-            await browser.close();
-            return;
+            return await browser.close();
         }
     }
+
     console.log("Bursunuz yatmamıştır.");
     await browser.close();
 })();
