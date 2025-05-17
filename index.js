@@ -45,8 +45,7 @@ if (!tckn || !pass) return console.error("Lütfen .env dosyasına giriş bilgile
     console.log("Burs kontrol ediliyor...");
 
     await page.locator('#contentStart > div.tableWrapper').waitHandle();
-    const paymentsArray = await page.$$('#contentStart > .tableWrapper > table > tbody > *')
-    console.log(paymentsArray);
+    const paymentsArray = await page.$$('#contentStart > .tableWrapper > table > tbody > *');
     for (let i = 0; i < paymentsArray.length; i++) {
         const payment = paymentsArray[i];
         const payer = await payment.evaluate(el => el.children[0].textContent);
